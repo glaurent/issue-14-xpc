@@ -20,6 +20,10 @@
 		3EDF29CB196C8549005EAE4D /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EADA8081956E79900F2EEFC /* main.swift */; };
 		3EDF29CD196C85B9005EAE4D /* ImageDownloaderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EDF29CC196C85B9005EAE4D /* ImageDownloaderProtocol.swift */; };
 		3EDF29CE196C85B9005EAE4D /* ImageDownloaderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EDF29CC196C85B9005EAE4D /* ImageDownloaderProtocol.swift */; };
+		AF3187441B355ED3002BEF98 /* AppPingBackProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF3187431B355ED3002BEF98 /* AppPingBackProtocol.swift */; };
+		AF3187451B355ED3002BEF98 /* AppPingBackProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF3187431B355ED3002BEF98 /* AppPingBackProtocol.swift */; };
+		AF3187471B355F56002BEF98 /* CustomClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF3187461B355F56002BEF98 /* CustomClass.swift */; };
+		AF3187481B355F56002BEF98 /* CustomClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF3187461B355F56002BEF98 /* CustomClass.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -108,6 +112,8 @@
 		3EADA8081956E79900F2EEFC /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		3EDB007519605EFD0042ACC7 /* Superfamous Images.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Superfamous Images.entitlements"; sourceTree = "<group>"; };
 		3EDF29CC196C85B9005EAE4D /* ImageDownloaderProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageDownloaderProtocol.swift; sourceTree = "<group>"; };
+		AF3187431B355ED3002BEF98 /* AppPingBackProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppPingBackProtocol.swift; sourceTree = "<group>"; };
+		AF3187461B355F56002BEF98 /* CustomClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomClass.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -220,6 +226,8 @@
 			isa = PBXGroup;
 			children = (
 				3EDF29CC196C85B9005EAE4D /* ImageDownloaderProtocol.swift */,
+				AF3187431B355ED3002BEF98 /* AppPingBackProtocol.swift */,
+				AF3187461B355F56002BEF98 /* CustomClass.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -374,7 +382,9 @@
 				3EDF29CD196C85B9005EAE4D /* ImageDownloaderProtocol.swift in Sources */,
 				3EDF29C5196C7EF5005EAE4D /* ImageLoader.swift in Sources */,
 				3E7610FC1956115B00985F48 /* main.swift in Sources */,
+				AF3187471B355F56002BEF98 /* CustomClass.swift in Sources */,
 				3E76111D1956304600985F48 /* ImageSet.swift in Sources */,
+				AF3187441B355ED3002BEF98 /* AppPingBackProtocol.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -390,8 +400,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AF3187481B355F56002BEF98 /* CustomClass.swift in Sources */,
 				3EDF29CB196C8549005EAE4D /* main.swift in Sources */,
 				3EADA80A1956E79900F2EEFC /* ImageDownloader.swift in Sources */,
+				AF3187451B355ED3002BEF98 /* AppPingBackProtocol.swift in Sources */,
 				3EDF29CE196C85B9005EAE4D /* ImageDownloaderProtocol.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

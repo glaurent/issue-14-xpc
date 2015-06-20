@@ -11,12 +11,30 @@ import ApplicationServices
 
 
 
-class ImageLoader: NSObject {
+class ImageLoader: NSObject, AppPingBackProtocol {
     
     // An XPC service
     lazy var imageDownloadConnection: NSXPCConnection = {
         let connection = NSXPCConnection(serviceName: "io.objc.Superfamous-Images.ImageDownloader")
-        connection.remoteObjectInterface = NSXPCInterface(`withProtocol`: ImageDownloaderProtocol.self)
+        connection.remoteObjectInterface = NSXPCInterface(withProtocol: ImageDownloaderProtocol.self)
+
+        // add CustomClass to classes that can be passed through the XPC connection (sent from the XPC module back to this app)
+        //
+        let aClass = CustomClass.self
+
+        let interface = NSXPCInterface(withProtocol: AppPingBackProtocol.self)
+
+        let currentExpectedClasses = interface.classesForSelector("pingAppBackWithMessages:", argumentIndex: 0, ofReply: false) as NSSet
+
+        let allClasses = currentExpectedClasses.setByAddingObject(CustomClass.self)
+
+        interface.setClasses(allClasses as Set<NSObject>, forSelector: "pingAppBackWithMessages:", argumentIndex: 0, ofReply: false)
+
+        // setup our side of the connection
+        //
+        connection.exportedInterface = interface
+        connection.exportedObject = self
+
         connection.resume()
         return connection
     }()
@@ -45,4 +63,21 @@ class ImageLoader: NSObject {
             }
         }
     }
+
+    func pingAppBack() {
+        NSLog("ping back recevied");
+    }
+
+    func pingAppBackWithMessage(message:CustomClass) {
+        NSLog("ping back recevied with message :\(message)");
+    }
+
+    func pingAppBackWithMessages(messages:NSArray) {
+        if let messagesSW = messages as? Array<CustomClass> {
+            for m in messagesSW {
+                NSLog("message : \(m)")
+            }
+        }
+    }
+
 }
