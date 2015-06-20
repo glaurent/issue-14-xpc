@@ -16,7 +16,7 @@ class ImageLoader: NSObject {
     // An XPC service
     lazy var imageDownloadConnection: NSXPCConnection = {
         let connection = NSXPCConnection(serviceName: "io.objc.Superfamous-Images.ImageDownloader")
-        connection.remoteObjectInterface = NSXPCInterface(`protocol`: ImageDownloaderProtocol.self)
+        connection.remoteObjectInterface = NSXPCInterface(`withProtocol`: ImageDownloaderProtocol.self)
         connection.resume()
         return connection
     }()
@@ -29,17 +29,19 @@ class ImageLoader: NSObject {
         
         let downloader = self.imageDownloadConnection.remoteObjectProxyWithErrorHandler {
             	(error) in NSLog("remote proxy error: %@", error)
-            } as ImageDownloaderProtocol
+            } as! ImageDownloaderProtocol
         downloader.downloadImageAtURL(url) {
             data in
             dispatch_async(dispatch_get_global_queue(0, 0)) {
-                let source = CGImageSourceCreateWithData(data, nil).takeRetainedValue()
-                let cgImage = CGImageSourceCreateImageAtIndex(source, 0, nil).takeRetainedValue()
-                var size = CGSize(
-                    width: CGFloat(CGImageGetWidth(cgImage)),
-                    height: CGFloat(CGImageGetHeight(cgImage)))
-                let image = NSImage(CGImage: cgImage, size: size)
-                completionHandler(image)
+                if let source = CGImageSourceCreateWithData(data, nil), cgImage = CGImageSourceCreateImageAtIndex(source, 0, nil) {
+                    let size = CGSize(
+                        width: CGFloat(CGImageGetWidth(cgImage)),
+                        height: CGFloat(CGImageGetHeight(cgImage)))
+                    let image = NSImage(CGImage: cgImage, size: size)
+                    completionHandler(image)
+                } else {
+                    completionHandler(nil)
+                }
             }
         }
     }

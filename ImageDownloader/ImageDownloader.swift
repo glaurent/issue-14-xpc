@@ -13,7 +13,7 @@ import Foundation
 class ImageDownloader : NSObject, ImageDownloaderProtocol {
     let session: NSURLSession
     
-    init()  {
+    override init()  {
         let config = NSURLSessionConfiguration.defaultSessionConfiguration()
         session = NSURLSession(configuration: config)
     }
@@ -30,6 +30,8 @@ class ImageDownloader : NSObject, ImageDownloaderProtocol {
                 }
             }
         }
-        task.resume()
+        if task != nil {
+            task!.resume()
+        }
     }
 }
