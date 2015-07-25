@@ -20,8 +20,6 @@ class ImageLoader: NSObject, AppPingBackProtocol {
 
         // add CustomClass to classes that can be passed through the XPC connection (sent from the XPC module back to this app)
         //
-        let aClass = CustomClass.self
-
         let interface = NSXPCInterface(withProtocol: AppPingBackProtocol.self)
 
         let currentExpectedClasses = interface.classesForSelector("pingAppBackWithMessages:", argumentIndex: 0, ofReply: false) as NSSet
@@ -29,6 +27,13 @@ class ImageLoader: NSObject, AppPingBackProtocol {
         let allClasses = currentExpectedClasses.setByAddingObject(CustomClass.self)
 
         interface.setClasses(allClasses as Set<NSObject>, forSelector: "pingAppBackWithMessages:", argumentIndex: 0, ofReply: false)
+
+
+        let currentExpectedClasses2 = interface.classesForSelector("pingAppBackWithMessages:", argumentIndex: 0, ofReply: false) as NSSet
+
+        let allClasses2 = currentExpectedClasses2.setByAddingObject(CustomClass.self)
+
+        interface.setClasses(allClasses2 as Set<NSObject>, forSelector: "pingAppBackWithMessage:", argumentIndex: 0, ofReply: false)
 
         // setup our side of the connection
         //

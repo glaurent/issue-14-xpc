@@ -8,11 +8,7 @@
 
 import Cocoa
 
-class Foo {
-
-}
-
-class CustomClass: NSObject, NSSecureCoding {
+@objc(CustomClass) class CustomClass: NSObject, NSSecureCoding {
 
     var attr1 = 0
     var attr2 = "foobar"
@@ -29,7 +25,10 @@ class CustomClass: NSObject, NSSecureCoding {
 
     @objc required init?(coder aDecoder: NSCoder) {
         attr1 = aDecoder.decodeIntegerForKey("attr1")
-//        attr2 = aDecoder.decodeObjectOfClass(NSString.self, forKey: "attr2") // won't compile yet, as of Xcode7 Beta1
+        attr2 = aDecoder.decodeObjectOfClass(NSString.self, forKey: "attr2") as! String
+
+//        attr2 = aDecoder.decodeObjectOfClass(String.self, forKey: "attr2") as! String
+
     }
 
     @objc func encodeWithCoder(aCoder: NSCoder) {

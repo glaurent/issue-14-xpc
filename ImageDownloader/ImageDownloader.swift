@@ -38,12 +38,13 @@ class ImageDownloader : NSObject, ImageDownloaderProtocol {
                 }
             }
         }
-        if task != nil {
-            task!.resume()
-        }
+
+        task.resume()
 
         if timer == nil {
-            timer = NSTimer(timeInterval: 2, target: self, selector: "talkBackToAppWithMessages", userInfo: nil, repeats: true)
+//            timer = NSTimer(timeInterval: 5, target: self, selector: "talkBackToApp", userInfo: nil, repeats: true)
+//            timer = NSTimer(timeInterval: 5, target: self, selector: "talkBackToAppWithMessage", userInfo: nil, repeats: true)
+            timer = NSTimer(timeInterval: 5, target: self, selector: "talkBackToAppWithMessages", userInfo: nil, repeats: true)
             timer?.fire()
         }
     }
