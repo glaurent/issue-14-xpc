@@ -51,7 +51,7 @@ class ImageLoader: NSObject, AppPingBackProtocol {
         
         let downloader = self.imageDownloadConnection.remoteObjectProxyWithErrorHandler {
             (error) in
-//            NSLog("remote proxy error: %@", error)
+            NSLog("remote proxy error: \(error)")
             } as! ImageDownloaderProtocol
         downloader.downloadImageAtURL(url) {
             data in
@@ -73,11 +73,11 @@ class ImageLoader: NSObject, AppPingBackProtocol {
     }
 
     @objc func pingAppBack() {
-        NSLog("ping back recevied");
+        NSLog("ping back received");
     }
 
     @objc func pingAppBackWithMessage(message:CustomClass) {
-        NSLog("ping back recevied with message :\(message)");
+        NSLog("ping back received with message :\(message)");
     }
 
     @objc func pingAppBackWithMessages(messages:NSArray) {
