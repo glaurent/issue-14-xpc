@@ -16,24 +16,23 @@ class ImageLoader: NSObject, AppPingBackProtocol {
     // An XPC service
     lazy var imageDownloadConnection: NSXPCConnection = {
         let connection = NSXPCConnection(serviceName: "io.objc.Superfamous-Images.ImageDownloader")
-        connection.remoteObjectInterface = NSXPCInterface(withProtocol: ImageDownloaderProtocol.self)
+        connection.remoteObjectInterface = NSXPCInterface(with: ImageDownloaderProtocol.self)
 
         // add CustomClass to classes that can be passed through the XPC connection (sent from the XPC module back to this app)
         //
-        let interface = NSXPCInterface(withProtocol: AppPingBackProtocol.self)
+        let interface = NSXPCInterface(with: AppPingBackProtocol.self)
 
-        let currentExpectedClasses = interface.classesForSelector("pingAppBackWithMessages:", argumentIndex: 0, ofReply: false) as NSSet
+        // pingAppBackWithMessage(message:)
+        //
+        let currentExpectedClasses = interface.classes(for: #selector(pingAppBackWithMessage(message:)), argumentIndex: 0, ofReply: false) as NSSet
+        let allClasses = currentExpectedClasses.adding(CustomClass.self)
+        interface.setClasses(allClasses as Set<NSObject>, for: #selector(pingAppBackWithMessage(message:)), argumentIndex: 0, ofReply: false)
 
-        let allClasses = currentExpectedClasses.setByAddingObject(CustomClass.self)
-
-        interface.setClasses(allClasses as Set<NSObject>, forSelector: "pingAppBackWithMessages:", argumentIndex: 0, ofReply: false)
-
-
-        let currentExpectedClasses2 = interface.classesForSelector("pingAppBackWithMessages:", argumentIndex: 0, ofReply: false) as NSSet
-
-        let allClasses2 = currentExpectedClasses2.setByAddingObject(CustomClass.self)
-
-        interface.setClasses(allClasses2 as Set<NSObject>, forSelector: "pingAppBackWithMessage:", argumentIndex: 0, ofReply: false)
+        // pingAppBackWithMessages(messages:)
+        //
+        let currentExpectedClasses2 = interface.classes(for:#selector(pingAppBackWithMessages(messages:)), argumentIndex: 0, ofReply: false) as NSSet
+        let allClasses2 = currentExpectedClasses2.adding(CustomClass.self)
+        interface.setClasses(allClasses2 as Set<NSObject>, for: #selector(pingAppBackWithMessages(messages:)), argumentIndex: 0, ofReply: false)
 
         // setup our side of the connection
         //
@@ -48,36 +47,40 @@ class ImageLoader: NSObject, AppPingBackProtocol {
         self.imageDownloadConnection.invalidate()
     }
     
-    func retrieveImageAtURL(url: NSURL, completionHandler: (NSImage?)->Void) {
+    func retrieveImageAtURL(_ url: URL, completionHandler: @escaping (NSImage?)->Void) {
         
         let downloader = self.imageDownloadConnection.remoteObjectProxyWithErrorHandler {
-            	(error) in NSLog("remote proxy error: %@", error)
+            (error) in
+//            NSLog("remote proxy error: %@", error)
             } as! ImageDownloaderProtocol
         downloader.downloadImageAtURL(url) {
             data in
-            dispatch_async(dispatch_get_global_queue(0, 0)) {
-                if let source = CGImageSourceCreateWithData(data, nil), cgImage = CGImageSourceCreateImageAtIndex(source, 0, nil) {
+            guard let data = data as NSData? else { return }
+            DispatchQueue.global().async {
+                if let source = CGImageSourceCreateWithData(data, nil), let cgImage = CGImageSourceCreateImageAtIndex(source, 0, nil) {
                     let size = CGSize(
-                        width: CGFloat(CGImageGetWidth(cgImage)),
-                        height: CGFloat(CGImageGetHeight(cgImage)))
-                    let image = NSImage(CGImage: cgImage, size: size)
+                        width: CGFloat(cgImage.width),
+                        height: CGFloat(cgImage.height))
+                    let image = NSImage(cgImage: cgImage, size: size)
                     completionHandler(image)
                 } else {
                     completionHandler(nil)
                 }
+
             }
+
         }
     }
 
-    func pingAppBack() {
+    @objc func pingAppBack() {
         NSLog("ping back recevied");
     }
 
-    func pingAppBackWithMessage(message:CustomClass) {
+    @objc func pingAppBackWithMessage(message:CustomClass) {
         NSLog("ping back recevied with message :\(message)");
     }
 
-    func pingAppBackWithMessages(messages:NSArray) {
+    @objc func pingAppBackWithMessages(messages:NSArray) {
         if let messagesSW = messages as? Array<CustomClass> {
             for m in messagesSW {
                 NSLog("message : \(m)")

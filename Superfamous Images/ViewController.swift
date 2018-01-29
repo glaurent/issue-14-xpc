@@ -30,7 +30,7 @@ class ViewController: NSViewController, ImageSetChangeObserver {
 
 extension ViewController : NSTableViewDataSource, NSTableViewDelegate {
     
-    func numberOfRowsInTableView(tableView: NSTableView) -> Int {
+    func numberOfRows(in: NSTableView) -> Int {
         if let c = self.imageSet?.images.count {
             return c
         } else {
@@ -38,12 +38,12 @@ extension ViewController : NSTableViewDataSource, NSTableViewDelegate {
         }
     }
     
-    func tableView(tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
+    func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
         return 400
     }
     
-    func tableView(tableView: NSTableView, viewForTableColumn tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        let cellView = tableView.makeViewWithIdentifier("Image", owner: self) as! NSTableCellView
+    func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+        let cellView = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "Image"), owner: self) as! NSTableCellView
         var image: NSImage? = nil
         if let c = self.imageSet?.images.count {
             if row < c {

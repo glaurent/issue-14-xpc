@@ -11,30 +11,30 @@ import Foundation
 
 
 class ImageDownloader : NSObject, ImageDownloaderProtocol {
-    let session: NSURLSession
+    let session: URLSession
 
     var appConnection: NSXPCConnection?
 
     var counter = 0
 
-    var timer:NSTimer?
+    var timer:Timer?
 
     override init()  {
-        let config = NSURLSessionConfiguration.defaultSessionConfiguration()
-        session = NSURLSession(configuration: config)
+        let config = URLSessionConfiguration.default
+        session = URLSession(configuration: config)
 
         super.init()
     }
     
-    func downloadImageAtURL(url: NSURL!, withReply: ((NSData!)->Void)!) {
-        let task = session.dataTaskWithURL(url) {
+    func downloadImageAtURL(_ url: URL, withReply: ((Data?)->Void)?) {
+        let task = session.dataTask(with: url as URL) {
             data, response, error in
-            if let httpResponse = response as? NSHTTPURLResponse {
+            if let httpResponse = response as? HTTPURLResponse {
                 switch (data, httpResponse) {
                 case let (d, r) where (200 <= r.statusCode) && (r.statusCode <= 399):
-                    withReply(d)
+                    withReply?(d)
                 default:
-                    withReply(nil)
+                    withReply?(nil)
                 }
             }
         }
@@ -42,9 +42,11 @@ class ImageDownloader : NSObject, ImageDownloaderProtocol {
         task.resume()
 
         if timer == nil {
-//            timer = NSTimer(timeInterval: 5, target: self, selector: "talkBackToApp", userInfo: nil, repeats: true)
-//            timer = NSTimer(timeInterval: 5, target: self, selector: "talkBackToAppWithMessage", userInfo: nil, repeats: true)
-            timer = NSTimer(timeInterval: 5, target: self, selector: "talkBackToAppWithMessages", userInfo: nil, repeats: true)
+            timer = Timer(timeInterval: 5, repeats: true, block: { (_) in
+//                self.talkBackToApp()
+//                self.talkBackToAppWithMessage()
+                self.talkBackToAppWithMessages()
+            })
             timer?.fire()
         }
     }
@@ -58,19 +60,22 @@ class ImageDownloader : NSObject, ImageDownloaderProtocol {
     func talkBackToAppWithMessage() {
         if let appCounterPart = appConnection?.remoteObjectProxy as? AppPingBackProtocol {
             let aMessage = CustomClass()
-            aMessage.attr1 = counter++
-            appCounterPart.pingAppBackWithMessage(aMessage)
+            counter += 1
+            aMessage.attr1 = counter
+            appCounterPart.pingAppBackWithMessage(message:aMessage)
         }
     }
 
-    func talkBackToAppWithMessages() {
+    @objc func talkBackToAppWithMessages() {
         if let appCounterPart = appConnection?.remoteObjectProxy as? AppPingBackProtocol {
             let aMessage1 = CustomClass()
-            aMessage1.attr1 = counter++
+            counter += 1
+            aMessage1.attr1 = counter
             let aMessage2 = CustomClass()
-            aMessage2.attr1 = counter++
+            counter += 1
+            aMessage2.attr1 = counter
 
-            appCounterPart.pingAppBackWithMessages([aMessage1, aMessage2])
+            appCounterPart.pingAppBackWithMessages(messages: [aMessage1, aMessage2])
         }
     }
 

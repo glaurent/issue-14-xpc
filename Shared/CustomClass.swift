@@ -9,6 +9,7 @@
 import Cocoa
 
 @objc(CustomClass) class CustomClass: NSObject, NSSecureCoding {
+    static var supportsSecureCoding: Bool = true
 
     var attr1 = 0
     var attr2 = "foobar"
@@ -24,20 +25,17 @@ import Cocoa
     }
 
     @objc required init?(coder aDecoder: NSCoder) {
-        attr1 = aDecoder.decodeIntegerForKey("attr1")
-        attr2 = aDecoder.decodeObjectOfClass(NSString.self, forKey: "attr2") as! String
+        attr1 = aDecoder.decodeInteger(forKey:"attr1")
+        let attr2Tmp = aDecoder.decodeObject(of:NSString.self, forKey: "attr2")
+        attr2 = (attr2Tmp ?? "noValue") as String
 
 //        attr2 = aDecoder.decodeObjectOfClass(String.self, forKey: "attr2") as! String
 
     }
 
-    @objc func encodeWithCoder(aCoder: NSCoder) {
-        aCoder.encodeInteger(attr1, forKey: "attr1")
-        aCoder.encodeObject(attr2, forKey: "attr2")
-    }
-
-    static func supportsSecureCoding() -> Bool {
-        return true
+    @objc func encode(with aCoder: NSCoder) {
+        aCoder.encode(attr1, forKey: "attr1")
+        aCoder.encode(attr2, forKey: "attr2")
     }
 
 }

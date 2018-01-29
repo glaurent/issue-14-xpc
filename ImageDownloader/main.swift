@@ -11,14 +11,14 @@ import Foundation
 
 
 class ServiceDelegate : NSObject, NSXPCListenerDelegate {
-    func listener(listener: NSXPCListener, shouldAcceptNewConnection newConnection: NSXPCConnection) -> Bool {
-        newConnection.exportedInterface = NSXPCInterface(withProtocol: ImageDownloaderProtocol.self)
+    func listener(_ listener: NSXPCListener, shouldAcceptNewConnection newConnection: NSXPCConnection) -> Bool {
+        newConnection.exportedInterface = NSXPCInterface(with: ImageDownloaderProtocol.self)
         let exportedObject = ImageDownloader()
         newConnection.exportedObject = exportedObject
 
         // setup connection from this service to the app
         //
-        newConnection.remoteObjectInterface = NSXPCInterface(withProtocol: AppPingBackProtocol.self)
+        newConnection.remoteObjectInterface = NSXPCInterface(with: AppPingBackProtocol.self)
 
         exportedObject.appConnection = newConnection
         
@@ -31,6 +31,6 @@ class ServiceDelegate : NSObject, NSXPCListenerDelegate {
 // Create the listener and resume it:
 //
 let delegate = ServiceDelegate()
-let listener = NSXPCListener.serviceListener()
+let listener = NSXPCListener.service()
 listener.delegate = delegate;
 listener.resume()
